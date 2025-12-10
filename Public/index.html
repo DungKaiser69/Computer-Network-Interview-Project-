@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Interview Login</title>
+    <style>
+      /* --- Global & Background --- */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        
+        /* --- CUSTOM BACKGROUND IMAGE SETTINGS --- */
+        /* Make sure your image file is in the same folder */
+        background-image: url('background.jpg'); /* <--- CHANGE THIS to your file name */
+        
+        background-size: cover;      /* Ensures the image covers the full screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* Keeps background still if page scrolls */
+        background-color: #f0f2f5;   /* Fallback color if image fails to load */
+      }
+      
+      /* (Optional) Add a dark overlay so text remains readable if your image is bright */
+      body::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0, 0, 0, 0.3); /* Adjust 0.3 to make it darker/lighter */
+          z-index: -1;
+      }
+
+      /* --- Card Style --- */
+      .card-container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+        max-width: 900px;
+        width: 100%;
+        position: relative;
+        z-index: 10;
+      }
+
+      /* --- Start Screen: Split Layout --- */
+      #start-screen-content {
+        display: flex;
+        flex-direction: row;
+        min-height: 480px;
+      }
+      
+      /* LEFT SIDE: Login */
+      .login-left {
+        flex: 1.1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      
+      /* RIGHT SIDE: Logo */
+      .login-right {
+        flex: 0.9;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px solid #f0f0f0;
+      }
+      
+      /* --- Dynamic Images --- */
+      .header-logo-img {
+          max-width: 100%;
+          height: auto;
+          margin-bottom: 30px;
+          display: block;
+      }
+      
+      .neu-logo-img {
+        width: 220px;
+        height: auto;
+        display: block;
+      }
+      
+      .neu-text {
+          margin-top: 15px;
+          font-weight: 500;
+          color: #333;
+          font-size: 1rem;
+      }
+
+      /* --- Form Elements --- */
+      .form-label {
+          font-size: 0.95rem;
+          color: #555;
+          margin-bottom: 8px;
+          display: block;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 1.2rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 1rem;
+        transition: border 0.3s;
+      }
+      input:focus {
+          border-color: #0056b3;
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
+      }
+      
+      .error-token {
+         color: #dc3545 !important; /* Màu đỏ nổi bật cho lỗi */
+         font-size: 1.1rem;
+         font-weight: 900 !important;
+         text-transform: uppercase !important;
+
+         display: block; /* Chiếm dòng riêng */
+         margin-top: -20px; /* Kéo lên gần input hơn */
+         margin-bottom: 5px; /* Tạo khoảng cách với phần tử tiếp theo */
+         height: 1.2em; /* Giữ chỗ để layout không bị nhảy khi lỗi xuất hiện/biến mất */
+         visibility: hidden; /* Mặc định ẩn lỗi */
+      }
+
+      .login-left .error-message {
+          color: #dc3545 !important;
+      }
+
+      .input-error {
+         border-color: #dc3545 !important; /* Đổi màu viền input thành đỏ khi có lỗi */
+      }
+      .name-label-spacing {
+         padding-top: 20px !important; 
+         display: block;
+      }
+
+      #start-session-btn {
+        background: #0056b3;
+        width: 100%;
+        padding: 14px;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 10px;
+      }
+      #start-session-btn:hover { background: #004494; }
+      #start-session-btn:disabled { background: #999; cursor: not-allowed; }
+
+      .lost-password {
+          margin-top: 20px;
+          text-align: center;
+          font-size: 0.95rem;
+      }
+      .lost-password a { color: #0056b3; text-decoration: none; }
+      
+      /* --- Interview Screen --- */
+      #interview-screen {
+          padding: 30px;
+      }
+      #video-preview {
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-height: 450px;
+      }
+      .btn-group { display: flex; gap: 15px; margin-top: 20px; }
+      .action-btn { padding: 12px 20px; border: none; color: white; border-radius: 6px; cursor: pointer; flex: 1; font-size:1rem; }
+      .next-btn { background: #0056b3; }
+      .finish-btn { background: #28a745; }
+      .rerecord-btn { background: #ffc107; color: #333; }
+
+      /* --- Utilities --- */
+      .hidden { display: none !important; }
+      #progress-container { height: 6px; background: #eee; width: 100%; position: absolute; top:0; left:0; }
+      #progress-fill { height: 100%; background: #0056b3; width: 0%; transition: width 0.3s; }
+      
+      #timer { font-size: 1.2rem; font-weight: bold; color: #333; }
+      .timer-warning { color: #dc3545 !important; animation: blink 1s infinite; }
+      @keyframes blink { 50% { opacity: 0.5; } }
+
+      #status { margin-top: 1rem; text-align: center; font-weight: 500; color: rgba(255,255,255,0.8); }
+    </style>
+  </head>
+  <body>
+
+    <div class="card-container">
+      
+      <div id="progress-container" class="hidden">
+        <div id="progress-fill"></div>
+      </div>
+
+      <div id="start-screen">
+        <div id="start-screen-content">
+            
+            <div class="login-left">
+                <img src="/image_fda.png" alt="Faculty Header" class="header-logo-img" />
+                
+                <span class="form-label">Access Token</span>
+                <input type="text" id="token" placeholder="" />
+                
+                <span id="token-error" class="error-message"></span> 
+                <span class="form-label name-label-spacing">Full Name</span>
+                <input type="text" id="name" placeholder="Candidate Name" />
+                
+                <span id="name-error" class="error-message"></span> <button id="start-session-btn">Log in</button>
+                
+                <div class="lost-password">
+                    <a href="#">Lost password?</a>
+                </div>
+            </div>
+
+            <div class="login-right">
+                <img src="/image_neu.png" alt="NEU Logo" class="neu-logo-img" />
+                <div class="neu-text">National Economics University</div>
+            </div>
+        </div>
+      </div>
+
+      <div id="interview-screen" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3 id="question-header" style="margin:0; color:#333;">Question 1</h3>
+          <div id="timer">02:00</div>
+        </div>
+        <p id="question-text" style="font-size: 1.15rem; color:#444; margin-bottom: 1.5rem; line-height:1.5;"></p>
+        
+        <video id="video-preview" autoplay muted playsinline></video>
+        
+        <div id="live-transcript" style="font-style:italic; color:#777; font-size:0.9rem; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:4px;">
+            (Transcript will appear here...)
+        </div>
+        
+        <div id="upload-status-container" class="hidden">
+          <div style="width:100%; background:#eee; height:6px; border-radius:3px; overflow:hidden;">
+            <div id="upload-progress-fill" style="width:0%; background:#28a745; height:100%;"></div>
+          </div>
+          <small style="color:#666; display:block; margin-top:4px;">Uploading...</small>
+        </div>
+
+        <div id="status" style="text-align:center; font-weight:600; color:#0056b3; margin-bottom:15px; font-size:1.1rem;"></div>
+        
+        <div class="btn-group">
+          <button id="rerecord-btn" class="action-btn rerecord-btn">Re-record</button>
+          <button id="next-btn" class="action-btn next-btn">Next Question</button>
+          <button id="finish-btn" class="action-btn finish-btn hidden">Finish Session</button>
+        </div>
+      </div>
+
+      <div id="finish-screen" class="hidden" style="text-align:center; padding: 60px;">
+        <h2 style="color:#28a745; font-size:2rem; margin-bottom:20px;">Interview Complete!</h2>
+        <p style="font-size:1.1rem; color:#555;">All answers have been successfully uploaded.</p>
+        <p style="color:#888; margin-top:40px;">You may now close this window.</p>
+      </div>
+
+    </div>
+    
+    <div id="status"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
