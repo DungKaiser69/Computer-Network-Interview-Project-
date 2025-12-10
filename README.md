@@ -1,5 +1,6 @@
 # WEB INTERVIEW RECORDER PROJECT
 A web-based video interview platform that records candidate answers per question and uploads them incrementally to a Node.js server. Designed for a Computer Networks project.
+
 ![Screen captured](giaodien.jpg)
 
 ## 📋 Table of Contents
